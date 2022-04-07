@@ -11,7 +11,8 @@ app.use((req,res,next)=>{
     next(createError(404,'page not found!'));
 });
 app.use((err,req,res,next)=>{
-    res.status(err.status);
-    res.send({error:{status:err.status,message:err.message}});
+     const statusCode=err.status || 500;
+    res.status(statusCode);
+    res.send({error:{statusCode,message:err.message}});
 });
 app.listen(port,()=>console.log(`server is working on http:${port}`));

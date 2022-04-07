@@ -4,19 +4,19 @@ import createError from 'http-errors';
 dotenv.config();
  class Auth{
  static jwtverify=(req,res,next)=>{
-     const token = req.headers.authorization.split('bearer')[1].trim();
-     console.log(token)
-     if (!token) {
+  try {
+     const tokenHeader = req.headers.authorization;
+     if (!tokenHeader) {
         next(createError(403,'A token is required for authentication'));
-      }
-      try {
+      }else{
+        const token = tokenHeader.split('bearer')[1].trim();
         const decoded = jwt.verify(token,process.env.SECKRET_KEY);
         req.userInfo = decoded.data;
-        console.log(req.body);
+      }
       } catch (err) {
         next(createError(402,'token is invalid'));
       }
-    next();
+   
 
  }
 }
