@@ -1,9 +1,7 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import createError from 'http-errors';
 import path from 'path';
 import route from './routes/route.js';
-dotenv.config();
 const port= process.env.port || 8000
 const app=express();
 app.use(express.json());
