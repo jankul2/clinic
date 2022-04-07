@@ -13,8 +13,11 @@ class Connection {
         connectionLimit: 10,
         queueLimit: 0
     });
+    
 }
- 
+
 }
+
+const dbconnection=new Connection();
 
 export default Connection;
