@@ -7,13 +7,13 @@ import { resolve } from 'url';
 class UserModel extends Connection {
     constructor() {
         super();
+        this.usersTable='users';
     }
-
     registrDbQury = (fullname, email, password) => {
         return new Promise((resolve, reject) => {
             const sql = 'INSERT INTO users SET ?';
             const userInfo = { fullname: fullname, email: email, password: password }
-            this.conn.query(sql, userInfo, (err, result) => {
+            this.conn.execute(sql,userInfo, (err, result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
                     return;
@@ -22,10 +22,11 @@ class UserModel extends Connection {
             })
         })
     }
-    loginDbQury = async (username, password) => {
+    loginDbQury = (username, password) => {
         return new Promise((resolve, reject) => {
             const sql = 'select * from users where email= ?';
-            this.conn.query(sql, [username, password], (err, result) => {
+            this.conn.execute(sql,[username], (err, result, fields) => {
+                console.log(result)
                 if (err) {
                     reject(createError(err.code, err.message));
                     return;

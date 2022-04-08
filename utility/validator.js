@@ -6,7 +6,9 @@ const authRegister=joi.object({
    confrim_password: joi.ref('password'),
 });
 const authLogin=joi.object({
-    email:joi.string().email().message('invalid email address!').required(),
-    password: joi.string().required(),
+    username:joi.string().email().required().messages({
+      'string.empty': `email is required!`,
+      'string.email': `email is invalid!` }),
+    password: joi.string().required()
  })
  export{authRegister,authLogin}
