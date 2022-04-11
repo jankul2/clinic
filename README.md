@@ -29,5 +29,10 @@ CREATE TABLE `users` (
 
 
 
+### API Requests
+### HOME : localhost:8000/ 
+### Login : localhost:8000/login
+### Register localhost:8000/register
+
 ### Developer
 ### Ankul Panwar (webdevloper)
