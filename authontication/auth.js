@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import createError from 'http-errors';
+import {imageUpload} from '../authontication/schmaUpload.js'
 dotenv.config();
  class Auth{
  static jwtverify= async(req,res,next)=>{
@@ -20,14 +21,19 @@ dotenv.config();
    
 
  }
- static profileImg= async(req,res,next)=>{
-  try {
-     
-      } catch (err) {
-        
-      }
-   
+ static uploadedInfo = async(req,res,next)=> {
+  const uploadinfo = imageUpload.single('profile_picture');   
+  uploadinfo(req, res, function (err) {
+    if (err) {
+        res.status(400).send({ error: err.message })
+    } 
+    if(!req.file || Object.keys(req.file).length==0){
+      res.send({error:'file is required!'})
+    }
+    res.locals.filename=req.file.filename;
+    next();
+})
+}
 
- }
 }
 export default Auth;

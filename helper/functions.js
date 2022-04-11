@@ -1,55 +1,40 @@
- import Connection from'../dbconfig/connection.js';
- import {userTable} from'../dbconfig/tables.js';
- import createError from 'http-errors';
- import {imageUpload} from '../authontication/schmaUpload.js'
- const conn=new Connection().conn;
- export const responseAPI = (result)=>{
-    if(Object.keys(result).length > 0 && result.constructor === Object){
-    return {success:1,response:result};
-    }else{
-        return {success:0,response:result};
+import Connection from '../dbconfig/connection.js';
+import { userTable } from '../dbconfig/tables.js';
+import createError from 'http-errors';
+import { authProfile } from '../utility/validator.js'
+const conn = new Connection().conn;
+export const responseAPI = (result) => {
+    if (Object.keys(result).length > 0 && result.constructor === Object) {
+        return { success: 1, response: result };
+    } else {
+        return { success: 0, response: result };
     }
 }
-export let checkUniqueEmail = async(email)=>{
-   return new Promise((resolve,reject)=>{
-        var result=5;
-        let sql='select count(*) as count from '+userTable+' where email =?';
-        conn.execute(sql,[email],(err,row)=>{
+export let checkUniqueEmail = async (email) => {
+    return new Promise((resolve, reject) => {
+        var result = 5;
+        let sql = 'select count(*) as count from ' + userTable + ' where email =?';
+        conn.execute(sql, [email], (err, row) => {
             if (err) {
                 return reject(err);
             }
-            if(row[0].count > 0){
-                reject(createError(422,'email already register'));
+            if (row[0].count > 0) {
+                reject(createError(422, 'email already register'));
             }
             resolve(row[0].count);
         });
     })
-    
+
 }
-export const profileData=(req,res,next)=>{
-    return new  Promise ((resolve,reject)=>{
-    const uploadinfo = imageUpload.single('profile_picture');   
-        let fileInfo= uploadinfo(req, res, function (err) {
-          if (err) {
-            next(createError(401, err.message));
-          } 
-          if(!req.file || Object.keys(req.file).length==0){
-            next(createError(401,'profile image is required '));
-          }
-          const info={fullname:req.body.fullname,picname:req.file.filename};
-          resolve(info);
-    });
-});
-}
-export const errHandling=(err,next,message='')=>{
-    
-    if(err.isJoi==true){
-        err.status='422';
+export const errHandling = (err, next, message = '') => {
+
+    if (err.isJoi == true) {
+        err.status = '422';
     }
     err.status = err.status || 500;
     next(err);
 }
-export let insertQuery=(data, tableName)=>{
+export let insertQuery = (data, tableName) => {
     let part1 = `INSERT INTO ${tableName} (`;
     let part2 = ")",
         part3 = "VALUES (",
@@ -65,9 +50,9 @@ export let insertQuery=(data, tableName)=>{
     let query = `${part1}${tableKeys}${part2} ${part3}${tableValues}${part4}`;
     return query;
 }
-export let updateQuery=(data, tableName, clauseKey, clauseValue)=>{
+export let updateQuery = (data, tableName, clauseKey, clauseValue) => {
     let part1 = `UPDATE ${tableName} SET`;
-    let part2 = `WHERE ${clauseKey} = ${clauseValue};`; 
+    let part2 = `WHERE ${clauseKey} = ${clauseValue};`;
     let updateString = "";
     for (let key in data) {
         updateString += `${key} = '${data[key]}',`;

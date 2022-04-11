@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import joi from 'joi';
 import userModel from '../model/userModel.js';
-import { responseAPI, checkUniqueEmail, errHandling,profileData } from '../helper/functions.js';
-import { authRegister, authLogin } from '../utility/validator.js'
+import { responseAPI, checkUniqueEmail, errHandling} from '../helper/functions.js';
+import { authRegister, authLogin,authProfile } from '../utility/validator.js'
 import dotenv from 'dotenv';
 import createError from 'http-errors';
 dotenv.config();
@@ -18,15 +18,13 @@ class UserController {
     }
     profile = async (req, res, next) => {
         try {
-        const uploadInfo= await profileData(req, res, next);
-            let {fullname,picname}=uploadInfo;
-            const result = await this.userModel.userProfile(fullname,picname);
+        let picname=res.locals.filename;
+        const result = await this.userModel.userProfile(req.body.fullname,picname);
             res.send(responseAPI(result));
         } catch (err) {
             errHandling(err,next);
         }
     }
-
     register = async (req, res, next) => {
         try {
 

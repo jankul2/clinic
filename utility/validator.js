@@ -11,4 +11,7 @@ const authLogin=joi.object({
       'string.email': `email is invalid!` }),
     password: joi.string().required()
  })
- export{authRegister,authLogin}
+ const authProfile=joi.object({
+   fullname:joi.string().required()
+ });
+ export{authRegister,authLogin,authProfile}
