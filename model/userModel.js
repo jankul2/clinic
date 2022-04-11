@@ -4,16 +4,17 @@ import path from 'path';
 import bcrypt from 'bcryptjs';
 import Connection from '../dbconfig/connection.js'
 import { resolve } from 'url';
+import {userTable} from'../dbconfig/tables.js';
+import {insertQuery,updateQuery}  from '../helper/functions.js';
 class UserModel extends Connection {
     constructor() {
         super();
-        this.usersTable='users';
     }
     registrDbQury = (fullname, email, password) => {
         return new Promise((resolve, reject) => {
-            const sql = 'INSERT INTO users SET ?';
-            const userInfo = { fullname: fullname, email: email, password: password }
-            this.conn.execute(sql,userInfo, (err, result) => {
+            const userInfo = { fullname: fullname, email: email, password: password };
+            const sql=insertQuery(userInfo,userTable);
+            this.conn.execute(sql,(err, result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
                     return;
@@ -24,9 +25,9 @@ class UserModel extends Connection {
     }
     loginDbQury = (username, password) => {
         return new Promise((resolve, reject) => {
-            const sql = 'select * from users where email= ?';
+            const sql = 'select * from '+userTable+' where email= ?';
             this.conn.execute(sql,[username], (err, result, fields) => {
-                console.log(result)
+                //console.log(result)
                 if (err) {
                     reject(createError(err.code, err.message));
                     return;

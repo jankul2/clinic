@@ -3,15 +3,16 @@ import dotenv from 'dotenv';
 import createError from 'http-errors';
 dotenv.config();
  class Auth{
- static jwtverify=(req,res,next)=>{
+ static jwtverify= async(req,res,next)=>{
   try {
-     const tokenHeader = req.headers.authorization;
+     const tokenHeader = await req.headers.authorization;
      if (!tokenHeader) {
         next(createError(403,'A token is required for authentication'));
       }else{
-        const token = tokenHeader.split('bearer')[1].trim();
-        const decoded = jwt.verify(token,process.env.SECKRET_KEY);
+        const token =  await tokenHeader.split('Bearer')[1].trim();
+        const decoded = await jwt.verify(token,process.env.seckret_key);
         req.userInfo = decoded.data;
+        next();
       }
       } catch (err) {
         next(createError(402,'token is invalid'));
