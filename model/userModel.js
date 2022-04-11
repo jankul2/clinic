@@ -10,7 +10,20 @@ class UserModel extends Connection {
     constructor() {
         super();
     }
-    registrDbQury = (fullname, email, password) => {
+    userProfile = (fullname,profilepic) => {
+        return new Promise((resolve, reject) => {
+            const userInfo = { fullname: fullname, profile_img: profilepic};
+            const sql=updateQuery(userInfo,userTable,'id','12');
+            this.conn.execute(sql,(err, result) => {
+                if (err) {
+                    reject(createError(err.code, err.message));
+                    return;
+                }
+                resolve(result);
+            })
+        })
+    }
+    userRegister = (fullname, email, password) => {
         return new Promise((resolve, reject) => {
             const userInfo = { fullname: fullname, email: email, password: password };
             const sql=insertQuery(userInfo,userTable);
@@ -23,7 +36,7 @@ class UserModel extends Connection {
             })
         })
     }
-    loginDbQury = (username, password) => {
+    userLogin = (username, password) => {
         return new Promise((resolve, reject) => {
             const sql = 'select * from '+userTable+' where email= ?';
             this.conn.execute(sql,[username], (err, result, fields) => {

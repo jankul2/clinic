@@ -20,5 +20,14 @@ dotenv.config();
    
 
  }
+ static profileImg= async(req,res,next)=>{
+  try {
+     
+      } catch (err) {
+        
+      }
+   
+
+ }
 }
 export default Auth;

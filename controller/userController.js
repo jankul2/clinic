@@ -3,50 +3,56 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import joi from 'joi';
 import userModel from '../model/userModel.js';
-import {responseAPI,checkUniqueEmail,errHandling}  from '../helper/functions.js';
-import {authRegister,authLogin} from '../utility/validator.js'
+import { responseAPI, checkUniqueEmail, errHandling,profileData } from '../helper/functions.js';
+import { authRegister, authLogin } from '../utility/validator.js'
 import dotenv from 'dotenv';
 import createError from 'http-errors';
 dotenv.config();
 class UserController {
     constructor(userModel) {
         this.userModel = userModel;
+        this.papa = '2';
     }
-    home=(req,res,next)=>{
-        res.send(responseAPI({content:'Welcome to Dashboard !'}));
+    home = (req, res, next) => {
+        res.send(responseAPI({ content: 'Welcome to Dashboard !' }));
     }
-    profile=(req,res,next)=>{
-     try{
-      
-     }catch(err){
-        errHandling(err);
-     }
-    }
-    register = async (req, res, next) => {
+    profile = async (req, res, next) => {
         try {
-            const salt = await bcrypt.genSalt(10);
-            let { fullname,email,password } = req.body;
-            let chekcemail= await checkUniqueEmail(email);
-            password = await bcrypt.hash(password, salt);
-            const result = await this.userModel.registrDbQury(fullname, email,password);
+        const uploadInfo= await profileData(req, res, next);
+            let {fullname,picname}=uploadInfo;
+            const result = await this.userModel.userProfile(fullname,picname);
             res.send(responseAPI(result));
         } catch (err) {
             errHandling(err,next);
         }
     }
+
+    register = async (req, res, next) => {
+        try {
+
+            let { fullname, email, password } = req.body;
+            let chekcemail = await checkUniqueEmail(email);
+            const salt = await bcrypt.genSalt(10);
+            password = await bcrypt.hash(password, salt);
+            const result = await this.userModel.userRegister(fullname, email, password);
+            res.send(responseAPI(result));
+        } catch (err) {
+            errHandling(err, next);
+        }
+    }
     login = async (req, res, next) => {
         try {
-            const validator= await authLogin.validateAsync(req.body,(err,value)=>{
-                if(err){
-                    return createError('422',err.message);
+            const validator = await authLogin.validateAsync(req.body, (err, value) => {
+                if (err) {
+                    return createError('422', err.message);
                 }
             });
             let { username, password } = await req.body;
-            const result = await this.userModel.loginDbQury(username,password);
-           const token = await jwt.sign({data:{id:result[0].id,role:result[0].role}},process.env.seckret_key,{ expiresIn: '1h' });
-            res.send(await responseAPI({email:result[0].email,token:token}));
+            const result = await this.userModel.userLogin(username, password);
+            const token = await jwt.sign({ data: { id: result[0].id, role: result[0].role } }, process.env.seckret_key, { expiresIn: '1h' });
+            res.send(await responseAPI({ email: result[0].email, token: token }));
         } catch (err) {
-            errHandling(err,next)
+            errHandling(err, next)
         }
     }
 }

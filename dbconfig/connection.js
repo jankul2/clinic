@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import createError from 'http-errors';
 import path from 'path';
 import mysql from 'mysql2';
+dotenv.config();
 class Connection {
     constructor() {
         this.conn = mysql.createPool({

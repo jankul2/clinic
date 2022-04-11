@@ -1,6 +1,7 @@
  import Connection from'../dbconfig/connection.js';
  import {userTable} from'../dbconfig/tables.js';
  import createError from 'http-errors';
+ import {imageUpload} from '../authontication/schmaUpload.js'
  const conn=new Connection().conn;
  export const responseAPI = (result)=>{
     if(Object.keys(result).length > 0 && result.constructor === Object){
@@ -25,7 +26,23 @@ export let checkUniqueEmail = async(email)=>{
     })
     
 }
-export const errHandling=(err,next)=>{
+export const profileData=(req,res,next)=>{
+    return new  Promise ((resolve,reject)=>{
+    const uploadinfo = imageUpload.single('profile_picture');   
+        let fileInfo= uploadinfo(req, res, function (err) {
+          if (err) {
+            next(createError(401, err.message));
+          } 
+          if(!req.file || Object.keys(req.file).length==0){
+            next(createError(401,'profile image is required '));
+          }
+          const info={fullname:req.body.fullname,picname:req.file.filename};
+          resolve(info);
+    });
+});
+}
+export const errHandling=(err,next,message='')=>{
+    
     if(err.isJoi==true){
         err.status='422';
     }
