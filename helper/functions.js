@@ -2,6 +2,8 @@ import Connection from '../dbconfig/connection.js';
 import { userTable } from '../dbconfig/tables.js';
 import createError from 'http-errors';
 import { authProfile } from '../utility/validator.js'
+import  fs from 'fs';
+import  path from 'path';
 const conn = new Connection().conn;
 export const responseAPI = (result) => {
     if (Object.keys(result).length > 0 && result.constructor === Object) {
@@ -9,6 +11,12 @@ export const responseAPI = (result) => {
     } else {
         return { success: 0, response: result };
     }
+}
+export const deleteFile=(file)=>{
+    let imagePath=path.join(path.resolve(),'/public/assets/images/'+file);
+    console.log(imagePath,'papa')
+
+    fs.unlinkSync(imagePath);
 }
 export let checkUniqueEmail = async (email) => {
     return new Promise((resolve, reject) => {

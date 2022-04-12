@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import joi from 'joi';
 import userModel from '../model/userModel.js';
-import { responseAPI, checkUniqueEmail, errHandling} from '../helper/functions.js';
+import { responseAPI, checkUniqueEmail, errHandling,deleteFile} from '../helper/functions.js';
 import { authRegister, authLogin,authProfile } from '../utility/validator.js'
 import dotenv from 'dotenv';
 import createError from 'http-errors';
@@ -11,7 +11,7 @@ dotenv.config();
 class UserController {
     constructor(userModel) {
         this.userModel = userModel;
-        this.papa = '2';
+
     }
     home = (req, res, next) => {
         res.send(responseAPI({ content: 'Welcome to Dashboard !' }));
@@ -19,8 +19,20 @@ class UserController {
     profile = async (req, res, next) => {
         try {
         let picname=res.locals.filename;
-        const result = await this.userModel.userProfile(req.body.fullname,picname);
-            res.send(responseAPI(result));
+        const validator = await authProfile.validateAsync(req.body, (err, value) => {
+            if (err) {
+                if(picname.length > 0){
+                    deleteFile(picname);
+                }
+                
+                return createError('422', err.message);
+            }
+        })
+     
+       const result = await this.userModel.userProfile(req.body.fullname,picname);
+       res.send(responseAPI(result));
+        
+       
         } catch (err) {
             errHandling(err,next);
         }

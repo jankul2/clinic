@@ -12,6 +12,6 @@ const authLogin=joi.object({
     password: joi.string().required()
  })
  const authProfile=joi.object({
-   fullname:joi.string().required()
+  fullname:joi.string().required(),
  });
  export{authRegister,authLogin,authProfile}
