@@ -13,5 +13,7 @@ const authLogin=joi.object({
  })
  const authProfile=joi.object({
   fullname:joi.string().required(),
+  phone:joi.string().length(10).pattern(/^[0-9]+$/).required(),
+  gender:joi.string().required(),
  });
  export{authRegister,authLogin,authProfile}

@@ -12,7 +12,7 @@ dotenv.config();
       }else{
         const token =  await tokenHeader.split('Bearer')[1].trim();
         const decoded = await jwt.verify(token,process.env.seckret_key);
-        req.userInfo = decoded.data;
+        res.locals.userInfo=decoded.data;
         next();
       }
       } catch (err) {

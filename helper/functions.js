@@ -42,31 +42,47 @@ export const errHandling = (err, next, message = '') => {
     err.status = err.status || 500;
     next(err);
 }
-export let insertQuery = (data, tableName) => {
-    let part1 = `INSERT INTO ${tableName} (`;
-    let part2 = ")",
-        part3 = "VALUES (",
-        part4 = ")";
-    let tableKeys = "",
-        tableValues = "";
-    for (let key in data) {
-        tableKeys += `${key},`;
-        tableValues += `'${data[key]}',`
+export let insertQuery =  (tableName,infoDetails,clauseValue) => {
+    let part1 = `insert ${tableName} SET`;
+    let fields="";
+    let wheres=" where ";
+    for (let key in infoDetails) {
+        fields += `${key} = '${infoDetails[key]}',`;
     }
-    tableKeys = tableKeys.slice(0, -1);
-    tableValues = tableValues.slice(0, -1);
-    let query = `${part1}${tableKeys}${part2} ${part3}${tableValues}${part4}`;
+    fields = fields.slice(0, -1);
+    if(Object.keys(clauseValue).length > 0){
+        for (let key in clauseValue) {
+            wheres += `${key} = '${clauseValue[key]}' and `;
+        }
+        wheres = wheres.slice(0, -5);
+    }
+    let query = `${part1} ${fields} ${wheres}`;
     return query;
 }
-export let updateQuery = (data, tableName, clauseKey, clauseValue) => {
+
+export let updateQuery = (tableName,infoDetails,clauseValue) => {
     let part1 = `UPDATE ${tableName} SET`;
-    let part2 = `WHERE ${clauseKey} = ${clauseValue};`;
-    let updateString = "";
-    for (let key in data) {
-        updateString += `${key} = '${data[key]}',`;
+    let fields="";
+    let wheres=" where ";
+    for (let key in infoDetails) {
+        fields += `${key} = '${infoDetails[key]}',`;
     }
-    updateString = updateString.slice(0, -1);
-    let query = `${part1} ${updateString} ${part2}`;
+    fields = fields.slice(0, -1);
+    if(Object.keys(clauseValue).length > 0){
+        for (let key in clauseValue) {
+            wheres += `${key} = '${clauseValue[key]}' and `;
+        }
+        wheres = wheres.slice(0, -5);
+    }
+    
+    let query = `${part1} ${fields} ${wheres}`;
     return query;
-    //updateQuery({name: "Tanjiro",tel: 77777777,email: "tanjiro@demonslayer.com"}, "Person", "ID", 111);
+}
+export const currentDate=()=>{
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+    return  yyyy + '/' + dd + '/' + mm;
+
 }

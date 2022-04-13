@@ -7,6 +7,7 @@ import { responseAPI, checkUniqueEmail, errHandling,deleteFile} from '../helper/
 import { authRegister, authLogin,authProfile } from '../utility/validator.js'
 import dotenv from 'dotenv';
 import createError from 'http-errors';
+import * as myhelper  from '../helper/functions.js';
 dotenv.config();
 class UserController {
     constructor(userModel) {
@@ -28,8 +29,21 @@ class UserController {
                 return createError('422', err.message);
             }
         })
-     
-       const result = await this.userModel.userProfile(req.body.fullname,picname);
+        const userID=res.locals.userInfo.id;
+        const role=res.locals.userInfo.role;
+        let {fullname,phone,gender}=req.body;
+        let userInfo={
+            profile_img:picname,
+            phone:phone,
+            gender:gender,
+            fullname:fullname
+        }
+       let  where={
+           id:userID,
+           fullname:fullname
+        }
+        console.log(myhelper.updateQuery('users',userInfo,where));
+       const result = await this.userModel.userProfile(userInfo,where);
        res.send(responseAPI(result));
         
        
@@ -41,7 +55,7 @@ class UserController {
         try {
 
             let { fullname, email, password } = req.body;
-            let chekcemail = await checkUniqueEmail(email);
+            let chekcemail = await myhelper.checkUniqueEmail(email);
             const salt = await bcrypt.genSalt(10);
             password = await bcrypt.hash(password, salt);
             const result = await this.userModel.userRegister(fullname, email, password);

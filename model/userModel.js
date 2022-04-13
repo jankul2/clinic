@@ -5,15 +5,14 @@ import bcrypt from 'bcryptjs';
 import Connection from '../dbconfig/connection.js'
 import { resolve } from 'url';
 import {userTable} from'../dbconfig/tables.js';
-import {insertQuery,updateQuery}  from '../helper/functions.js';
+import * as myhelper  from '../helper/functions.js';
 class UserModel extends Connection {
     constructor() {
         super();
     }
-    userProfile = (fullname,profilepic) => {
+    userProfile = (userInfo,where) => {
         return new Promise((resolve, reject) => {
-            const userInfo = { fullname: fullname, profile_img: profilepic};
-            const sql=updateQuery(userInfo,userTable,'id','12');
+            const sql=myhelper.updateQuery(userTable,userInfo,where);
             this.conn.execute(sql,(err, result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
@@ -26,7 +25,7 @@ class UserModel extends Connection {
     userRegister = (fullname, email, password) => {
         return new Promise((resolve, reject) => {
             const userInfo = { fullname: fullname, email: email, password: password };
-            const sql=insertQuery(userInfo,userTable);
+            const sql=myhelper.insertQuery(userInfo,userTable);
             this.conn.execute(sql,(err, result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
