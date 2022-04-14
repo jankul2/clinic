@@ -27,7 +27,15 @@ CREATE TABLE `users` (
   `register_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
+CREATE TABLE `posts` (
+  `id` int(11) NOT NULL,
+  `author_id` int(90) NOT NULL,
+  `category` int(20) NOT NULL,
+  `post_name` varchar(255) NOT NULL,
+  `post_content` text NOT NULL,
+  `register_post` date NOT NULL,
+  `profile_img` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ### API Requests
 ### HOME : localhost:8000/ 
