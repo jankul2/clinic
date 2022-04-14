@@ -4,15 +4,27 @@ import path from 'path';
 import bcrypt from 'bcryptjs';
 import Connection from '../dbconfig/connection.js'
 import { resolve } from 'url';
-import {userTable} from'../dbconfig/tables.js';
+import {blogTable} from'../dbconfig/tables.js';
 import * as myhelper  from '../helper/functions.js';
-class UserModel extends Connection {
+class BlogModel extends Connection {
     constructor() {
         super();
     }
-    userProfile = (userInfo,where) => {
+    findAll = () => {
         return new Promise((resolve, reject) => {
-            const sql=myhelper.updateQuery(userTable,userInfo,where);
+            const sql=myhelper.selectQuery(blogTable,{});
+            this.conn.execute(sql,(err,result) => {
+                if (err) {
+                    reject(createError(err.code, err.message));
+                    return;
+                }
+                resolve(result);
+            })
+        })
+    }
+    insertBlog = (userInfo) => {
+        return new Promise((resolve, reject) => {
+            const sql=myhelper.insertQuery(blogTable,userInfo,{});
             this.conn.execute(sql,(err, result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
@@ -22,10 +34,9 @@ class UserModel extends Connection {
             })
         })
     }
-    userRegister = (fullname, email, password) => {
+    updateBlog = (userInfo,where) => {
         return new Promise((resolve, reject) => {
-            const userInfo = { fullname: fullname, email: email, password: password };
-            const sql=myhelper.insertQuery(userInfo,userTable);
+            const sql=myhelper.updateQuery(blogTable,userInfo,where);
             this.conn.execute(sql,(err, result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
@@ -35,26 +46,19 @@ class UserModel extends Connection {
             })
         })
     }
-    userLogin = (username, password) => {
+    deleteBlog = (where) => {
         return new Promise((resolve, reject) => {
-            const sql = 'select * from '+userTable+' where email= ?';
-            this.conn.execute(sql,[username], (err, result, fields) => {
-                //console.log(result)
+            const sql=myhelper.deleteQuery(blogTable,where);
+            this.conn.execute(sql,(err,result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
                     return;
                 }
-                bcrypt.compare(password, result[0].password, function (error, res) {
-                    if (res) {
-                        resolve(result);
-                    } else {
-                        reject(createError(402, 'invalid details'));
-                        return;
-                    }
-                });
+                resolve(result);
             })
         })
     }
+
 }
 
-export default new UserModel();
+export default new BlogModel();

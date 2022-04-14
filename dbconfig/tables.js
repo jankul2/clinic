@@ -1,3 +1,3 @@
 const userTable='users';
-const userPosts='posts';
-export {userTable,userPosts}
+const blogTable='posts';
+export {userTable,blogTable}

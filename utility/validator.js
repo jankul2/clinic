@@ -13,5 +13,11 @@ const authLogin=joi.object({
  })
  const authProfile=joi.object({
   fullname:joi.string().required(),
+  phone:joi.string().length(10).pattern(/^[0-9]+$/).required(),
+  gender:joi.string().required(),
  });
- export{authRegister,authLogin,authProfile}
+ const blogAuth=joi.object({
+   post_name:joi.string().required(),
+   post_content:joi.string().required(),
+  }).options({allowUnknown: true});;
+ export{authRegister,authLogin,authProfile,blogAuth}
