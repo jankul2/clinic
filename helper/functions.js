@@ -55,8 +55,11 @@ export let insertQuery =  (tableName,infoDetails,clauseValue) => {
             wheres += `${key} = '${clauseValue[key]}' and `;
         }
         wheres = wheres.slice(0, -5);
+    }else{
+        wheres="";  
     }
     let query = `${part1} ${fields} ${wheres}`;
+    console.log(query)
     return query;
 }
 
@@ -78,11 +81,40 @@ export let updateQuery = (tableName,infoDetails,clauseValue) => {
     let query = `${part1} ${fields} ${wheres}`;
     return query;
 }
+export let selectQuery = (tableName,clauseValue) => {
+    let part1 = `select * from  ${tableName}`;
+    let fields="";
+    let wheres=" where ";
+    if(Object.keys(clauseValue).length > 0){
+        for (let key in clauseValue) {
+            wheres += `${key} = '${clauseValue[key]}' and `;
+        }
+        wheres = wheres.slice(0, -5);
+    }else{
+        wheres="";  
+    }
+    
+    let query = `${part1}  ${wheres}`;
+    //console.log(query)
+    return query;
+}
+export let deleteQuery = (tableName,clauseValue) => {
+    let part1 = `delete from ${tableName} `;
+    let wheres=" where ";
+    if(Object.keys(clauseValue).length > 0){
+        for (let key in clauseValue) {
+            wheres += `${key} = '${clauseValue[key]}' and `;
+        }
+        wheres = wheres.slice(0, -5);
+    }
+    let query = `${part1} ${wheres}`;
+    return query;
+}
 export const currentDate=()=>{
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, '0');
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = today.getFullYear();
-    return  yyyy + '/' + dd + '/' + mm;
+    return  yyyy + '-' + mm + '-' + dd;
 
 }

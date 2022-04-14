@@ -22,17 +22,26 @@ dotenv.config();
 
  }
  static uploadedInfo = async(req,res,next)=> {
-  const uploadinfo = imageUpload.single('profile_picture');   
-  uploadinfo(req, res, function (err) {
-    if (err) {
-        res.status(400).send({ error: err.message })
-    } 
-    if(!req.file || Object.keys(req.file).length==0){
-        next(createError(402,'file is required!'));   
+  const uploadinfo = imageUpload.single('profile_picture'); 
+ 
+    uploadinfo(req, res, function (err) {
+      if (err) {
+          next(createError(500,err.message));  
+          return ;
+      } 
+      if (req.file== undefined) {
+        next(createError(500,'image field is required !'));  
+        return ;
     }
-    res.locals.filename=req.file.filename;
-    next();
-})
+      if(!req.file || Object.keys(req.file).length==0){
+          next(createError(402,'image is required!'));   
+      }
+      //console.log(req.file,'papa')
+      res.locals.filename=req.file.filename;
+      next();
+  })
+    
+
 }
 
 }
