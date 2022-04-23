@@ -3,9 +3,11 @@ import createError from 'http-errors';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import Connection from '../dbconfig/connection.js'
-import { resolve } from 'url';
 import {userTable} from'../dbconfig/tables.js';
 import * as myhelper  from '../helper/functions.js';
+import EmailSend from '../authontication/email.js'
+import ejs from 'ejs';
+
 class UserModel extends Connection {
     constructor() {
         super();
@@ -25,13 +27,22 @@ class UserModel extends Connection {
     userRegister = (fullname, email, password) => {
         return new Promise((resolve, reject) => {
             const userInfo = { fullname: fullname, email: email, password: password };
-            const sql=myhelper.insertQuery(userInfo,userTable);
+            console.log('check')
+            const sql=myhelper.insertQuery(userTable,userInfo);
             this.conn.execute(sql,(err, result) => {
                 if (err) {
                     reject(createError(err.code, err.message));
                     return;
                 }
-                resolve(result);
+               
+              this.emailTemplate(fullname,email).then(emailtemplate => {
+                    let sendEmail=EmailSend.registrationEmail(email,userInfo,emailtemplate);
+                    resolve(result);
+                  }).catch(err=>{
+                    reject(createError(402,err));
+                    return;
+                  }); 
+                
             })
         })
     }
@@ -55,6 +66,13 @@ class UserModel extends Connection {
             })
         })
     }
+    emailTemplate=(fullname,email)=>{
+       return  ejs.renderFile(path.join(path.resolve(),'/views/email-template/mail.ejs'),{
+            user_firstname: fullname,
+            confirm_link: "http://www.8link.in/confirm=" + email
+          })
+    }
+    
 }
 
 export default new UserModel();

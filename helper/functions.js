@@ -3,7 +3,9 @@ import { userTable } from '../dbconfig/tables.js';
 import createError from 'http-errors';
 import { authProfile } from '../utility/validator.js'
 import  fs from 'fs';
-import  path from 'path';
+import  path, { resolve } from 'path';
+import ejs from 'ejs'
+import pdf from "html-pdf";
 const conn = new Connection().conn;
 export const responseAPI = (result) => {
     if (Object.keys(result).length > 0 && result.constructor === Object) {
@@ -42,7 +44,7 @@ export const errHandling = (err, next, message = '') => {
     err.status = err.status || 500;
     next(err);
 }
-export let insertQuery =  (tableName,infoDetails,clauseValue) => {
+export let insertQuery =  (tableName,infoDetails,clauseValue={}) => {
     let part1 = `insert ${tableName} SET`;
     let fields="";
     let wheres=" where ";

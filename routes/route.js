@@ -10,4 +10,5 @@ router.post('/login',userController.login);
 router.post('/addblog',[auth.jwtverify,auth.uploadedInfo],blogController.add);
 router.patch('/updateblog/:id',[auth.jwtverify,auth.uploadedInfo],blogController.update);
 router.delete('/deleteblog/:id',[auth.jwtverify],blogController.delete);
+router.get('/genratepdf/:id',userController.pdfGenrate);
 export default router;
